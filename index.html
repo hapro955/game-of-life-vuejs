@@ -29,7 +29,7 @@
 
     Vue.component("my-component",{
         props: ['number'],
-        template: `<div v-bind:class="'xxx-' + number"></div>`,
+        template: `<div v-bind:class="number"></div>`,
     });
     var map = [];
     var convertMap = [];
@@ -105,6 +105,13 @@
                             count++;
                         }
                     }
+                }
+                return this.convertNumber(this.convertUniverseMap);
+            },
+
+            convertNumber: function () {
+                for (let i = 0;  i < this.x * this.y; i++) {
+                    this.convertUniverseMap[i] = this.convertUniverseMap[i] === 1 ? 'planet' : 'space';
                 }
                 return this.convertUniverseMap;
             }

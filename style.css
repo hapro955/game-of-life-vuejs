@@ -15,7 +15,7 @@ button{
   margin-bottom: 5px;
 }
 
-.xxx-1 {
+.planet {
   background-color: white;  /*#231475*/
   width: 6px;
   height: 6px;
@@ -23,7 +23,7 @@ button{
   float: left;
 }
 
-.xxx-0 {
+.space {
   background-color: #614b45;
   width: 6px;
   height: 6px;
