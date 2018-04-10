@@ -8,16 +8,16 @@
     
 </head>
 <body style="padding: 10px 10px;">
-    <div id ="grid" >
+    <div id ="map" >
         <button @click="createMap = true">Create map</button><br>
         <button v-on:click="[nextMap = true, createMap = false]">Next map</button><br>
 
         <div v-if="createMap"> 
-            <my-component v-for="item in createUniverseMap"  v-bind:number="item"></my-component>
+            <cell v-for="item in createUniverseMap"  v-bind:number="item"></cell>
         </div>
 
         <div v-if="nextMap">
-             <my-component v-for="item in nextUniverseMap"  v-bind:number="item"></my-component>
+             <cell v-for="item in nextUniverseMap"  v-bind:number="item"></cell>
         </div>
     </div>                                                                    
 </body>
@@ -27,14 +27,14 @@
 <script type="text/javascript">
    
 
-    Vue.component("my-component",{
+    Vue.component("cell",{
         props: ['number'],
         template: `<div v-bind:class="number"></div>`,
     });
     var map = [];
     var convertMap = [];
     new Vue ({
-        el: '#grid',
+        el: '#map',
         data: {
             x: 50,
             y: 50,
