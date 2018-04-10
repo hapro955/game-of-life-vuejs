@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style1.css">
+    <script type="text/javascript" src="vue.js"></script>
+    
+</head>
+<body style="padding: 10px 10px;">
+    <div id ="grid" >
+        <button @click="createMap = true">Create map</button><br>
+        <button v-on:click="[nextMap = true, createMap = false]">Next map</button><br>
+
+        <div v-if="createMap"> 
+            <my-component v-for="item in createUniverseMap"  v-bind:number="item"></my-component>
+        </div>
+
+        <div v-if="nextMap">
+             <my-component v-for="item in nextUniverseMap"  v-bind:number="item"></my-component>
+        </div>
+    </div>                                                                    
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<script type="text/javascript">
+   
+
+    Vue.component("my-component",{
+        props: ['number'],
+        template: `<div v-bind:class="'xxx-' + number"></div>`,
+    });
+    var map = [];
+    var convertMap = [];
+    new Vue ({
+        el: '#grid',
+        data: {
+            x: 50,
+            y: 50,
+            result: map,
+            convertUniverseMap: convertMap,
+            createMap: false,
+            nextMap: false,   
+        },
+        computed: {
+          
+            createUniverseMap: function () {
+               return this.convertTwoDimensionalArrayToOneDimensionalArray(this.
+            createUniverseMapNumber());
+            },
+
+            nextUniverseMap: function () {
+                return this.convertTwoDimensionalArrayToOneDimensionalArray(this.nextUniverseMapNumber());         
+            }
+        },
+
+        methods: {
+
+            createUniverseMapNumber: function () {
+                for (let i = 0 ; i < this.x; i++) {
+                    this.result[i] = [];
+                    for (let j = 0; j < this.y; j++) {
+                        this.result[i][j] = Math.round(Math.random());
+                    }
+                }
+                return this.result;
+            },
+
+            getValueCell: function (i, j) {
+                if(i < 0 || i >= this.x || j < 0 || j >= this.y) {
+                    return 0;
+                }
+                return this.result[i][j];
+            },
+
+            countNeighborPlanet: function (i, j) {
+                return (this.getValueCell(i - 1,j - 1) + this.getValueCell(i - 1,j) + this.getValueCell(i - 1,j + 1) + this.getValueCell(i,j - 1) + this.getValueCell(i,j + 1) + this.getValueCell(i + 1,j - 1) + this.getValueCell(i + 1,j) + this.getValueCell(i + 1,j + 1));
+            },
+
+            calculateCellState: function (i, j) {
+                if(this.countNeighborPlanet(i, j) < 2 || this.countNeighborPlanet(i, j) > 3) {
+                    this.result[i][j] = 0;
+                } else if(this.countNeighborPlanet(i, j) === 3) {
+                    this.result[i][j] = 1;
+                } 
+            },
+
+            nextUniverseMapNumber: function () {
+                for(let i = 0; i < this.x; i++) {
+                    for(let j = 0; j < this.y; j++) {
+                        this.calculateCellState(i, j);
+                    }
+                }
+
+                return this.result;
+            },
+
+            convertTwoDimensionalArrayToOneDimensionalArray: function (result) {
+                let count = 0;
+                while(count < this.x * this.y) {
+                    for (let i = 0; i < this.x; i++) {
+                        for (let j = 0; j < this.y; j++) {
+                            this.convertUniverseMap[count] = this.result[i][j];
+                            count++;
+                        }
+                    }
+                }
+                return this.convertUniverseMap;
+            }
+
+        }
+    });
+
+</script>
+
+</html>
