@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <<title>Game Of Life</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
@@ -8,117 +9,98 @@
     
 </head>
 <body style="padding: 10px 10px;">
-    <div id ="map" >
-        <button @click="createMap = true">Create map</button><br>
-        <button v-on:click="[nextMap = true, createMap = false]">Next map</button><br>
-
-        <div v-if="createMap"> 
-            <cell v-for="item in createUniverseMap"  v-bind:number="item"></cell>
-        </div>
-
-        <div v-if="nextMap">
-             <cell v-for="item in nextUniverseMap"  v-bind:number="item"></cell>
-        </div>
+    <div id ="map" >        
+        <universe-map v-bind:mapnumber="result"></universe-map>
     </div>                                                                    
 </body>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
 <script type="text/javascript">
-   
-
-    Vue.component("cell",{
-        props: ['number'],
-        template: `<div v-bind:class="number"></div>`,
-    });
-    var map = [];
-    var convertMap = [];
-    new Vue ({
-        el: '#map',
-        data: {
-            x: 50,
-            y: 50,
-            result: map,
-            convertUniverseMap: convertMap,
-            createMap: false,
-            nextMap: false,   
-        },
-        computed: {
-          
-            createUniverseMap: function () {
-               return this.convertTwoDimensionalArrayToOneDimensionalArray(this.
-            createUniverseMapNumber());
-            },
-
-            nextUniverseMap: function () {
-                return this.convertTwoDimensionalArrayToOneDimensionalArray(this.nextUniverseMapNumber());         
+Vue.component("universe-map",{
+    props: ['mapnumber'],
+    template: `<div>
+                    <div v-for="item in mapnumber">
+                        <row-map v-bind:rownumber="item"></row-map>
+                    </div>
+                </div>`
+});
+Vue.component("row-map",{
+    props: ['rownumber'], 
+    template: `<div>
+                    <div v-for="item in rownumber">
+                        <cell-map v-bind:number="item"></cell-map>
+                    </div>
+                </div>`
+});
+Vue.component("cell-map",{
+    props: ['number'],
+    template: `<div v-bind:class="'status-universe-' + number"></div>`
+});
+var map = [];
+new Vue ({
+    el: '#map',
+    data: {
+        x: 50,
+        y: 50,
+        result: map  
+    },
+    methods: {
+        createUniverseMapNumber: function () {
+            for (let i = 0 ; i < this.x; i++) {
+                this.result[i] = [];
+                for (let j = 0; j < this.y; j++) {
+                    this.result[i][j] = Math.round(Math.random());
+                }
             }
+            return this.result;
         },
-
-        methods: {
-
-            createUniverseMapNumber: function () {
-                for (let i = 0 ; i < this.x; i++) {
-                    this.result[i] = [];
-                    for (let j = 0; j < this.y; j++) {
-                        this.result[i][j] = Math.round(Math.random());
-                    }
-                }
-                return this.result;
-            },
-
-            getValueCell: function (i, j) {
-                if(i < 0 || i >= this.x || j < 0 || j >= this.y) {
-                    return 0;
-                }
-                return this.result[i][j];
-            },
-
-            countNeighborPlanet: function (i, j) {
-                return (this.getValueCell(i - 1,j - 1) + this.getValueCell(i - 1,j) + this.getValueCell(i - 1,j + 1) + this.getValueCell(i,j - 1) + this.getValueCell(i,j + 1) + this.getValueCell(i + 1,j - 1) + this.getValueCell(i + 1,j) + this.getValueCell(i + 1,j + 1));
-            },
-
-            calculateCellState: function (i, j) {
-                if(this.countNeighborPlanet(i, j) < 2 || this.countNeighborPlanet(i, j) > 3) {
-                    this.result[i][j] = 0;
-                } else if(this.countNeighborPlanet(i, j) === 3) {
-                    this.result[i][j] = 1;
-                } 
-            },
-
-            nextUniverseMapNumber: function () {
-                for(let i = 0; i < this.x; i++) {
-                    for(let j = 0; j < this.y; j++) {
-                        this.calculateCellState(i, j);
-                    }
-                }
-
-                return this.result;
-            },
-
-            convertTwoDimensionalArrayToOneDimensionalArray: function (result) {
-                let count = 0;
-                while(count < this.x * this.y) {
-                    for (let i = 0; i < this.x; i++) {
-                        for (let j = 0; j < this.y; j++) {
-                            this.convertUniverseMap[count] = this.result[i][j];
-                            count++;
-                        }
-                    }
-                }
-                return this.convertNumber(this.convertUniverseMap);
-            },
-
-            convertNumber: function () {
-                for (let i = 0;  i < this.x * this.y; i++) {
-                    this.convertUniverseMap[i] = this.convertUniverseMap[i] === 1 ? 'planet' : 'space';
-                }
-                return this.convertUniverseMap;
+        getValueCell: function (i, j) {
+            if(i < 0 || i >= this.x || j < 0 || j >= this.y) {
+                return 0;
             }
-
+            return this.result[i][j];
+        },
+        countNeighborPlanet: function (i, j) {
+            return (this.getValueCell(i - 1,j - 1) + this.getValueCell(i - 1,j) + this.getValueCell(i - 1,j + 1) + this.getValueCell(i,j - 1) + this.getValueCell(i,j + 1) + this.getValueCell(i + 1,j - 1) + this.getValueCell(i + 1,j) + this.getValueCell(i + 1,j + 1));
+        },
+        calculateCellState: function (i, j) {
+            var x = 0;
+            if(this.result[i][j] == 0) {
+                if (this.countNeighborPlanet(i, j) < 2 || this.countNeighborPlanet(i, j) > 3) {
+                    x = 0;
+                } else if (this.countNeighborPlanet(i, j) == 3) {
+                    x = 1;
+                } else {
+                    x = 0;
+                }
+            }else  {
+                if (this.countNeighborPlanet(i, j) < 2 || this.countNeighborPlanet(i, j) > 3) {
+                    x = 0;
+                } else {
+                    x = 1;
+                }
+            }
+            return x;
+        },
+        nextUniverseMapNumber: function () {
+            var nextMap = [];
+            for(let i = 0; i < this.x; i++) {
+                nextMap[i] = [];
+                for(let j = 0; j < this.y; j++) {
+                    nextMap[i][j] = this.calculateCellState(i, j);
+                }
+            }
+            this.result = nextMap;
+            return this.result;
         }
-    });
-
+    },
+    created() {
+        this.createUniverseMapNumber();
+    },
+    mounted() {
+        setInterval(()=>{
+            this.nextUniverseMapNumber();
+        },20);
+    }
+});
 </script>
-
 </html>

@@ -3,19 +3,7 @@
   width: 300px;
 }
 
-.clear {
-  clear: both;
-}
-
-.showMap {
-  margin-bottom: 10px;
-}
-
-button{
-  margin-bottom: 5px;
-}
-
-.planet {
+.status-universe-1 {
   background-color: white;  /*#231475*/
   width: 6px;
   height: 6px;
@@ -23,7 +11,7 @@ button{
   float: left;
 }
 
-.space {
+.status-universe-0 {
   background-color: #614b45;
   width: 6px;
   height: 6px;
